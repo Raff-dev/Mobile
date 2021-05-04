@@ -5,9 +5,20 @@ from .models import Profile
 from .forms import ProfileForm
 
 
+@admin.register(Profile)
 class ProfileAdmin(UserAdmin):
-    ordering = ['email']
-    form = ProfileForm
-
-
-admin.site.register(Profile, ProfileAdmin)
+    model = Profile
+    list_display = ('email', 'is_staff', 'is_active',)
+    list_filter = ('email', 'is_staff', 'is_active',)
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Permissions', {'fields': ('is_staff', 'is_active')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'password1', 'password2', 'is_staff', 'is_active')}
+         ),
+    )
+    search_fields = ('email',)
+    ordering = ('email',)
