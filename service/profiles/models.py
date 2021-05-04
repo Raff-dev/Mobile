@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 
 class ProfileManager(BaseUserManager):
@@ -37,11 +37,12 @@ class ProfileManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-class Profile(AbstractUser):
-    username = None
+class Profile(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
-    USERNAME_FIELD = AbstractUser.EMAIL_FIELD
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = ProfileManager()
