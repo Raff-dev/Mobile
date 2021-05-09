@@ -1,28 +1,40 @@
-﻿using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float velocity = 5;
-    public float rotationRate = 500f;
+    public float forwardSpeedMagnifier = 5f;
+    public float strafeSpeedMagnifier = 3f;
+    public float hoverSpeedMagnifier = 2f;
 
-    private Vector3 moveDirection = new Vector3(0, 0, 1).normalized;
-    private float horizontal = 0f;
+    public float forwardAcceleration = 2.5f;
+    public float strafeAcceleration = 2f;
+    public float hoverAcceleration = 2f;
 
-    // Update is called once per frame
+    public float forwardSpeed = 20f;
+    public float strafeSpeed;
+    public float hoverSpeed;
+
+    public float lookRateSpeed = 90f;
+
+    void Start()
+    {
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationZ;
+    }
+
     void Update()
     {
-        horizontal = Input.GetAxis("Horizontal");
-        moveDirection = new Vector3(horizontal * velocity * Time.deltaTime, 0, 1).normalized;
-    }
+        strafeSpeed = Mathf.Lerp(strafeSpeed, Input.GetAxis("Horizontal") * strafeSpeedMagnifier, forwardAcceleration * Time.deltaTime);
+        hoverSpeed = Mathf.Lerp(hoverSpeed, Input.GetAxis("Vertical") * hoverSpeedMagnifier, hoverAcceleration * Time.deltaTime);
 
-    private void FixedUpdate()
-    {
-        Rigidbody rb = GetComponent<Rigidbody>();
-        rb.MovePosition(rb.position + transform.TransformDirection(moveDirection) * velocity * Time.deltaTime);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, transform.rotation * Quaternion.Euler(-horizontal, horizontal, horizontal), rotationRate * Time.deltaTime);
-    }
+        transform.Rotate(
+            hoverSpeed * lookRateSpeed * Time.deltaTime,
+            strafeSpeed * lookRateSpeed * Time.deltaTime,
+            0.0f,
+            Space.Self
+        );
 
+        transform.position += transform.forward * forwardSpeed * Time.deltaTime;
+    }
 }
