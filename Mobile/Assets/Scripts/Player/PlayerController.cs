@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     public float hoverSpeedMagnifier = 2f;
 
     public float forwardAcceleration = 2.5f;
-    public float strafeAcceleration = 2f;
+    public float strafeAcceleration = 5f;
     public float hoverAcceleration = 2f;
 
     public float forwardSpeed = 20f;
@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        strafeSpeed = Mathf.Lerp(strafeSpeed, Input.GetAxis("Horizontal") * strafeSpeedMagnifier, forwardAcceleration * Time.deltaTime);
+        strafeSpeed = Mathf.Lerp(strafeSpeed, Input.GetAxis("Horizontal") * strafeSpeedMagnifier, strafeAcceleration * Time.deltaTime);
         hoverSpeed = Mathf.Lerp(hoverSpeed, Input.GetAxis("Vertical") * hoverSpeedMagnifier, hoverAcceleration * Time.deltaTime);
 
         transform.Rotate(
