@@ -1,12 +1,10 @@
-from django.urls import path, include
 from rest_framework import routers
 
-from django.urls import path, include
-
-from .views import ProfileViewSet
+from .views import ProfileViewSet, SkinViewSet
 
 router = routers.DefaultRouter()
 router.register('Profiles', ProfileViewSet, basename='Profiles')
+router.register('SkinViewSet', SkinViewSet, basename='Skins')
 
 urlpatterns = router.urls + [
 

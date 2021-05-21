@@ -41,6 +41,8 @@ class Profile(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    stellar_points = models.IntegerField(default=0)
+    high_score = models.IntegerField(default=0)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -52,3 +54,11 @@ class Profile(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class Skin(models.Model):
+    profile = models.ForeignKey(Profile, related_name='skins', on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+
+    class Meta:
+        unique_together = ['profile', 'name']
