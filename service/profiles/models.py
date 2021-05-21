@@ -83,3 +83,7 @@ class SkinOwnership(models.Model):
 
     class Meta:
         unique_together = ['profile', 'skin']
+
+    @property
+    def name(self):
+        return f'{self.skin.name}'
