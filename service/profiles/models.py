@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.fields.related import ForeignKey
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
@@ -49,6 +50,15 @@ class Profile(AbstractBaseUser, PermissionsMixin):
 
     objects = ProfileManager()
 
+    def save(self, *args, **kwargs) -> None:
+        created = self.id is None
+        super().save(*args, **kwargs)
+
+        if created:
+            deafault_skin = Skin.objects.filter(default=True).first()
+            if deafault_skin:
+                SkinOwnership.objects.create(profile=self, skin=deafault_skin)
+
     class Meta:
         ordering = ['email']
 
@@ -57,8 +67,19 @@ class Profile(AbstractBaseUser, PermissionsMixin):
 
 
 class Skin(models.Model):
-    profile = models.ForeignKey(Profile, related_name='skins', on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
+    default = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return f'{self.name}'
+
+
+class SkinOwnership(models.Model):
+    profile = ForeignKey(Profile, verbose_name=_("Profile"), related_name='skins', on_delete=models.CASCADE)
+    skin = models.ForeignKey(Skin, verbose_name=_("Skin"), related_name='ownerships', on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f'{self.profile} - {self.skin.name}'
 
     class Meta:
-        unique_together = ['profile', 'name']
+        unique_together = ['profile', 'skin']
