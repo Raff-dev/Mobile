@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import Profile
-from .forms import ProfileForm
+from .models import Profile, Skin, SkinOwnership
 
 
 @admin.register(Profile)
@@ -22,3 +21,7 @@ class ProfileAdmin(UserAdmin):
     )
     search_fields = ('email',)
     ordering = ('email',)
+
+
+admin.site.register(Skin)
+admin.site.register(SkinOwnership)
