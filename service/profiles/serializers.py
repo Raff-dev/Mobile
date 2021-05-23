@@ -1,9 +1,19 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import Profile
+from rest_framework.relations import StringRelatedField
+from .models import Profile, Skin, SkinOwnership
+
+
+class SkinOwnerShipSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SkinOwnership
+        fields = ['name']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    skins = SkinOwnerShipSerializer(many=True, read_only=True)
+
     class Meta:
         model = Profile
         exclude = ['password']

@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.fields.related import ForeignKey
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
@@ -41,14 +42,48 @@ class Profile(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    stellar_points = models.IntegerField(default=0)
+    high_score = models.IntegerField(default=0)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = ProfileManager()
 
+    def save(self, *args, **kwargs) -> None:
+        created = self.id is None
+        super().save(*args, **kwargs)
+
+        if created:
+            deafault_skin = Skin.objects.filter(default=True).first()
+            if deafault_skin:
+                SkinOwnership.objects.create(profile=self, skin=deafault_skin)
+
     class Meta:
         ordering = ['email']
 
     def __str__(self):
         return self.email
+
+
+class Skin(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    default = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return f'{self.name}'
+
+
+class SkinOwnership(models.Model):
+    profile = ForeignKey(Profile, verbose_name=_("Profile"), related_name='skins', on_delete=models.CASCADE)
+    skin = models.ForeignKey(Skin, verbose_name=_("Skin"), related_name='ownerships', on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f'{self.profile} - {self.skin.name}'
+
+    class Meta:
+        unique_together = ['profile', 'skin']
+
+    @property
+    def name(self):
+        return f'{self.skin.name}'
