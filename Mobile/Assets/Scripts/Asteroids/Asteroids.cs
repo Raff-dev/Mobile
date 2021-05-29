@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CrystalScore : MonoBehaviour
+public class Asteroids : MonoBehaviour
 {
     public int scoreValue = 10;
 
