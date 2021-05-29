@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net.Mail;
 using UnityEngine;
 
-public abstract class FormControlButton : NavigationButton {
+public abstract class FormControlButton : NavigationHandler {
     public const int VALIDATION_MIN_PASSWORD_LENGTH = 8;
     public const string VALIDATION_EMAIL_INVALID = "This email is invalid";
     private string VALIDATION_PASSWORD_TOO_SHORT = "The password must contain at least " + VALIDATION_MIN_PASSWORD_LENGTH + " characters";
