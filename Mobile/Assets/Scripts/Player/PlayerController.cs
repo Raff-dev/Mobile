@@ -18,13 +18,20 @@ public class PlayerController : MonoBehaviour
 
     public float lookRateSpeed = 90f;
 
+    public float X;
+    public float Z;
+
     void Start()
     {
         GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationZ;
+        X = transform.position.x;
+        Z = transform.position.z;
     }
 
     void Update()
     {
+
+
         strafeSpeed = Mathf.Lerp(strafeSpeed, Input.GetAxis("Horizontal") * strafeSpeedMagnifier, strafeAcceleration * Time.deltaTime);
         hoverSpeed = Mathf.Lerp(hoverSpeed, Input.GetAxis("Vertical") * hoverSpeedMagnifier, hoverAcceleration * Time.deltaTime);
 
@@ -35,6 +42,16 @@ public class PlayerController : MonoBehaviour
             Space.Self
         );
 
-        transform.position += transform.forward * forwardSpeed * Time.deltaTime;
+        if (X*X + Z*Z > 14400)
+        {
+            transform.position = new Vector3(0, 0, 0);
+        }
+        else
+        {
+            transform.position += transform.forward * forwardSpeed * Time.deltaTime;
+        }
+
+
+
     }
 }
