@@ -18,25 +18,25 @@ public static class Registration {
     private static ResponseMessage getResponseMessage(UnityWebRequest request) {
         Debug.Log(request.downloadHandler.text);
         if (request.result == UnityWebRequest.Result.ConnectionError)
-            return new ResponseMessage(ServiceUtil.ERROR_SOMETING_WRONG, true);
+            return new ResponseMessage(ServiceUtil.ERROR_SOMETING_WRONG, ResponseMessage.ERROR);
 
         else if (request.responseCode == ServiceUtil.STATUS_201_CREATED)
-            return new ResponseMessage(SUCCESS_ACCOUNT_CREATED, false);
+            return new ResponseMessage(SUCCESS_ACCOUNT_CREATED, ResponseMessage.SUCCESS);
 
         else if (request.responseCode == ServiceUtil.STATUS_400_BAD_REQUEST) {
             RegisterResponse response = JsonUtility.FromJson<RegisterResponse>(request.downloadHandler.text);
 
             if (response.password.Count > 0)
-                return new ResponseMessage(response.password[0], true);
+                return new ResponseMessage(response.password[0], ResponseMessage.ERROR);
 
             else if (response.email.Count > 0)
-                return new ResponseMessage(response.email[0], true);
+                return new ResponseMessage(response.email[0], ResponseMessage.ERROR);
 
             else if (response.re_password.Count > 0)
-                return new ResponseMessage(response.re_password[0], true);
+                return new ResponseMessage(response.re_password[0], ResponseMessage.ERROR);
         }
 
-        return new ResponseMessage(ServiceUtil.ERROR_UNKNOWN, true);
+        return new ResponseMessage(ServiceUtil.ERROR_UNKNOWN, ResponseMessage.ERROR);
     }
 
     public static WWWForm createRegisterForm(string email, string password, string password2) {

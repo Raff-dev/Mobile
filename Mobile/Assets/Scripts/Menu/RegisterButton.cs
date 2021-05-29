@@ -29,9 +29,9 @@ public class RegisterButton : FormControlButton {
         if (message.isError) return message;
 
         if (!passwordField.text.Equals(password2Field.text)) {
-            return new ResponseMessage(VALIDATION_PASSWORDS_NOT_MATCHING, true);
+            return new ResponseMessage(VALIDATION_PASSWORDS_NOT_MATCHING, ResponseMessage.ERROR);
         }
 
-        return new ResponseMessage(null, false);
+        return new ResponseMessage(null, ResponseMessage.SUCCESS);
     }
 }
