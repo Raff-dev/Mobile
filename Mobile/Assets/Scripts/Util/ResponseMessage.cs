@@ -11,16 +11,22 @@ public class ResponseMessage {
     public Color ERROR_COLOR = UnityEngine.Color.red;
     public Color MESSAGE_COLOR = UnityEngine.Color.blue;
 
+    public const bool SUCCESS = false;
+    public const bool ERROR = true;
 
-    public ResponseMessage(string message, string data, bool isError) {
+    public ResponseMessage(string message, bool isError, string data) {
         this.message = message;
-        this.data = data;
         this.isError = isError;
+        this.data = data;
     }
 
     public ResponseMessage(string message, bool isError) {
         this.message = message;
         this.isError = isError;
+    }
+
+    public ResponseMessage() {
+        this.isError = false;
     }
 
     public void show(TMPro.TMP_Text messageText) {
