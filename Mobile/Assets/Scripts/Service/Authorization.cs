@@ -10,31 +10,12 @@ public static class Authorization {
     public const string AUTHORIZATION_HEADER_NAME = "Authorization";
     public const string AUTHORIZATION_HEADER_VALUE_PREFIX = "JWT ";
 
-
-    public static IEnumerator login(WWWForm form, System.Action<ResponseMessage> handleResponse) {
+    public static IEnumerator login(WWWForm form, System.Action<Response> handleResponse) {
         UnityWebRequest request = UnityWebRequest.Post(ServiceUtil.LOGIN_URL, form);
         yield return request.SendWebRequest();
 
-        ResponseMessage message = getLoginResponseMessage(request);
-        handleResponse(message);
-    }
-
-    private static ResponseMessage getLoginResponseMessage(UnityWebRequest request) {
-        if (request.result == UnityWebRequest.Result.ConnectionError)
-            return new ResponseMessage(ServiceUtil.ERROR_SOMETING_WRONG, ResponseMessage.ERROR);
-
-        else if (request.responseCode == ServiceUtil.STATUS_200_OK)
-            return new ResponseMessage(null, ResponseMessage.SUCCESS, request.downloadHandler.text);
-
-        else if (request.responseCode == ServiceUtil.STATUS_401_UNAUTHORIZED) {
-            LoginResponse response = JsonUtility.FromJson<LoginResponse>(
-                request.downloadHandler.text);
-
-            if (response.detail != null)
-                return new ResponseMessage(response.detail, ResponseMessage.ERROR);
-        }
-
-        return new ResponseMessage(ServiceUtil.ERROR_UNKNOWN, ResponseMessage.ERROR);
+        Response response = getLoginResponse(request);
+        handleResponse(response);
     }
 
     public static WWWForm createLoginForm(string email, string password) {
@@ -49,13 +30,13 @@ public static class Authorization {
         request.SetRequestHeader(AUTHORIZATION_HEADER_NAME, accessKey);
     }
 
-    public static bool wasAuthorized() {
+    public static bool wasLoggedIn() {
         return PlayerPrefs.HasKey(REFRESH_KEY_NAME) && PlayerPrefs.HasKey(ACCESS_KEY_NAME);
     }
 
-    public static IEnumerator verify(System.Action<ResponseMessage> handleResponse) {
-        if (!wasAuthorized()) {
-            handleResponse(new ResponseMessage(ServiceUtil.WARNING_LOGGED_OUT, ResponseMessage.ERROR));
+    public static IEnumerator verify(System.Action<MessageResponse> handleResponse) {
+        if (!wasLoggedIn()) {
+            handleResponse(MessageResponse.loggedOutError());
         }
 
         string accessToken = PlayerPrefs.GetString(ACCESS_KEY_NAME);
@@ -65,51 +46,69 @@ public static class Authorization {
         UnityWebRequest request = UnityWebRequest.Post(ServiceUtil.VERIFY_URL, form);
         yield return request.SendWebRequest();
 
-        ResponseMessage message = getVerifyResponseMessage(request);
-        handleResponse(message);
+        MessageResponse response = (MessageResponse)getAuthResponse(request);
+        handleResponse(response);
     }
 
-    private static ResponseMessage getVerifyResponseMessage(UnityWebRequest request) {
-        if (request.result == UnityWebRequest.Result.ConnectionError)
-            return new ResponseMessage(ServiceUtil.ERROR_SOMETING_WRONG, ResponseMessage.ERROR);
+    public static Response getAuthResponse(
+        UnityWebRequest request,
+        Func<UnityWebRequest, bool> isSuccess,
+        Func<UnityWebRequest, Response> getReturn
+    ) {
 
-        else if (request.responseCode == ServiceUtil.STATUS_200_OK)
-            return new ResponseMessage();
+        if (isSuccess(request))
+            return getReturn(request);
+
+        else if (request.result == UnityWebRequest.Result.ConnectionError)
+            return MessageResponse.connectionError();
+
+        else if (request.responseCode == ServiceUtil.STATUS_400_BAD_REQUEST)
+            return MessageResponse.badRequestError();
 
         else if (request.responseCode == ServiceUtil.STATUS_401_UNAUTHORIZED) {
-            Debug.Log(request.downloadHandler.text);
+            AuthResponse response = JsonUtility.FromJson<AuthResponse>(request.downloadHandler.text);
+            return MessageResponse.unauthorizedError(response.detail);
 
-            JWTResponse response = JsonUtility.FromJson<JWTResponse>(
-                request.downloadHandler.text);
+        } else if (!wasLoggedIn())
+            return MessageResponse.loggedOutError();
 
-            if (response.detail != null)
-                return new ResponseMessage(response.detail, ResponseMessage.ERROR);
-
-        }
-        return new ResponseMessage(ServiceUtil.ERROR_UNKNOWN, ResponseMessage.ERROR);
+        return MessageResponse.unknownError();
     }
 
-    [Serializable]
-    public class LoginResponse {
-        public string refresh;
-        public string access;
-        public string detail;
+    public static Response getAuthResponse(UnityWebRequest request) {
+        return getAuthResponse(
+            request: request,
+            isSuccess: request => request.responseCode == ServiceUtil.STATUS_200_OK,
+            getReturn: request => MessageResponse.ok()
+        );
     }
 
-    [Serializable]
-    public class JWTResponse {
-        public string detail;
-        public string code;
+    private static Response getLoginResponse(UnityWebRequest request) {
+        return getAuthResponse(
+            request: request,
+            isSuccess: request => request.responseCode == ServiceUtil.STATUS_200_OK,
+            getReturn: request => {
+                AuthResponse response = JsonUtility.FromJson<AuthResponse>(request.downloadHandler.text);
+                return DataResponse<AuthResponse>.ok(data: response);
+            }
+        );
     }
 
     public static void logout() {
         PlayerPrefs.DeleteKey(ACCESS_KEY_NAME);
         PlayerPrefs.DeleteKey(REFRESH_KEY_NAME);
+        PlayerPrefs.DeleteKey(User.USER_ID_KEY_NAME);
     }
 
-    public static void saveAuthorizationTokens(string responseText) {
-        LoginResponse response = JsonUtility.FromJson<LoginResponse>(responseText);
+    public static void saveAuthorizationTokens(AuthResponse response) {
         PlayerPrefs.SetString(ACCESS_KEY_NAME, response.access);
         PlayerPrefs.SetString(REFRESH_KEY_NAME, response.refresh);
+    }
+
+    [Serializable]
+    public class AuthResponse {
+        public string refresh;
+        public string access;
+        public string detail;
     }
 }
