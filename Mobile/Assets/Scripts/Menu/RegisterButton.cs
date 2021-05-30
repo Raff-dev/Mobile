@@ -11,7 +11,7 @@ public class RegisterButton : FormControlButton {
     public const string VALIDATION_PASSWORDS_NOT_MATCHING = "Provided passwords do not match";
 
     public override void navigate() {
-        ResponseMessage message = validateInput();
+        MessageResponse message = validateInput();
         message.show(this.messageText);
 
         if (message.isError) return;
@@ -23,15 +23,15 @@ public class RegisterButton : FormControlButton {
             message.show(this.messageText)));
     }
 
-    protected override ResponseMessage validateInput() {
-        ResponseMessage message = base.validateInput();
+    protected override MessageResponse validateInput() {
+        MessageResponse message = base.validateInput();
 
         if (message.isError) return message;
 
         if (!passwordField.text.Equals(password2Field.text)) {
-            return new ResponseMessage(VALIDATION_PASSWORDS_NOT_MATCHING, ResponseMessage.ERROR);
+            return MessageResponse.validationError(VALIDATION_PASSWORDS_NOT_MATCHING);
         }
 
-        return new ResponseMessage(null, ResponseMessage.SUCCESS);
+        return MessageResponse.ok();
     }
 }
