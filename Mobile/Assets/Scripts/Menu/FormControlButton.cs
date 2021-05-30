@@ -20,7 +20,7 @@ public abstract class FormControlButton : NavigationHandler {
         if (passwordField.text.Length < VALIDATION_MIN_PASSWORD_LENGTH)
             return new ResponseMessage(VALIDATION_PASSWORD_TOO_SHORT, true);
 
-        return new ResponseMessage(null, false);
+        return new ResponseMessage(null, ResponseMessage.SUCCESS);
     }
 
     protected virtual bool emailIsValid(string email) {
