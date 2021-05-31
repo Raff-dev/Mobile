@@ -11,10 +11,12 @@ public class GameOverMenu : MenuPanel {
 
     private const float STELLAR_POINTS_RATIO = 0.1f;
     private const string STELLAR_POINTS_NAME = "stellar_points";
+    private const string SCORE_NAME = "score";
 
     [SerializeField] private TMPro.TMP_Text stellarPointsGainText;
     [SerializeField] private TMPro.TMP_Text stellarPointsText;
     [SerializeField] private TMPro.TMP_Text scoreText;
+    [SerializeField] private TMPro.TMP_Text highScoreText;
     [SerializeField] private ScoreCounter scoreCounter;
 
     private void Awake() {
@@ -23,8 +25,9 @@ public class GameOverMenu : MenuPanel {
 
     public void gameOver() {
         int stellarPointsGain = calculateStellarPointsGain(scoreCounter.score);
-        setScoreText(scoreCounter.score);
         setStellarPointsGainText(stellarPointsGain);
+        setScoreText(scoreCounter.score);
+        highScoreText.gameObject.SetActive(false);
 
         StartCoroutine(gainStellarPoints(stellarPointsGain, response => {
             if (response.isError) {
@@ -34,6 +37,19 @@ public class GameOverMenu : MenuPanel {
                 setStellarPointsText(data.stellar_points);
             }
         }));
+
+        StartCoroutine(setHighScore(scoreCounter.score, response => {
+            if (response.isError) {
+                Debug.Log(MessageResponse.from(response).message);
+            } else {
+                Profile.ProfileResponse data = DataResponse<Profile.ProfileResponse>.from(response).data;
+                Debug.Log(data.toString());
+
+                if (data.is_high_score) {
+                    highScoreText.gameObject.SetActive(true);
+                }
+            }
+        }));
     }
 
     private IEnumerator gainStellarPoints(int stellarPointsGain, System.Action<Response> handleResponse) {
@@ -41,7 +57,18 @@ public class GameOverMenu : MenuPanel {
         form.AddField(STELLAR_POINTS_NAME, stellarPointsGain);
 
         UnityWebRequest request = UnityWebRequest.Post(ServiceUtil.STELLAR_POINTS_GAIN_URL, form);
+        Authorization.setAuthorizationHeader(request);
 
+        yield return request.SendWebRequest();
+        Response response = Profile.getProfileResponse(request);
+        handleResponse(response);
+    }
+
+    private IEnumerator setHighScore(int score, System.Action<Response> handleResponse) {
+        WWWForm form = new WWWForm();
+        form.AddField(SCORE_NAME, score);
+
+        UnityWebRequest request = UnityWebRequest.Post(ServiceUtil.HIGH_SCORE_URL, form);
         Authorization.setAuthorizationHeader(request);
 
         yield return request.SendWebRequest();
