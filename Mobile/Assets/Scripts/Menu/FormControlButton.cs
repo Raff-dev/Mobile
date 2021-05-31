@@ -13,14 +13,14 @@ public abstract class FormControlButton : NavigationHandler {
     [SerializeField] protected TMPro.TMP_InputField emailField;
     [SerializeField] protected TMPro.TMP_InputField passwordField;
 
-    protected virtual ResponseMessage validateInput() {
+    protected virtual MessageResponse validateInput() {
         if (!emailIsValid(emailField.text))
-            return new ResponseMessage(VALIDATION_EMAIL_INVALID, true);
+            return MessageResponse.validationError(VALIDATION_EMAIL_INVALID);
 
         if (passwordField.text.Length < VALIDATION_MIN_PASSWORD_LENGTH)
-            return new ResponseMessage(VALIDATION_PASSWORD_TOO_SHORT, true);
+            return MessageResponse.validationError(VALIDATION_PASSWORD_TOO_SHORT);
 
-        return new ResponseMessage(null, ResponseMessage.SUCCESS);
+        return MessageResponse.ok();
     }
 
     protected virtual bool emailIsValid(string email) {

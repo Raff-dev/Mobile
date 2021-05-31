@@ -1,3 +1,4 @@
+using System.Net.Http;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,36 +8,35 @@ using UnityEngine.Networking;
 public static class Registration {
     public const string SUCCESS_ACCOUNT_CREATED = "You have succesfully created an account.\nPlease verify your email.";
 
-    public static IEnumerator register(WWWForm form, System.Action<ResponseMessage> handleResponse) {
+    public static IEnumerator register(WWWForm form, System.Action<MessageResponse> handleResponse) {
         UnityWebRequest request = UnityWebRequest.Post(ServiceUtil.REGISTER_URL, form);
         yield return request.SendWebRequest();
 
-        ResponseMessage message = getResponseMessage(request);
+        MessageResponse message = getMessageResponse(request);
         handleResponse(message);
     }
 
-    private static ResponseMessage getResponseMessage(UnityWebRequest request) {
-        Debug.Log(request.downloadHandler.text);
+    private static MessageResponse getMessageResponse(UnityWebRequest request) {
         if (request.result == UnityWebRequest.Result.ConnectionError)
-            return new ResponseMessage(ServiceUtil.ERROR_SOMETING_WRONG, ResponseMessage.ERROR);
+            return MessageResponse.connectionError();
 
         else if (request.responseCode == ServiceUtil.STATUS_201_CREATED)
-            return new ResponseMessage(SUCCESS_ACCOUNT_CREATED, ResponseMessage.SUCCESS);
+            return MessageResponse.ok(message: SUCCESS_ACCOUNT_CREATED);
 
         else if (request.responseCode == ServiceUtil.STATUS_400_BAD_REQUEST) {
             RegisterResponse response = JsonUtility.FromJson<RegisterResponse>(request.downloadHandler.text);
 
             if (response.password.Count > 0)
-                return new ResponseMessage(response.password[0], ResponseMessage.ERROR);
+                return MessageResponse.validationError(response.password[0]);
 
             else if (response.email.Count > 0)
-                return new ResponseMessage(response.email[0], ResponseMessage.ERROR);
+                return MessageResponse.validationError(response.email[0]);
 
             else if (response.re_password.Count > 0)
-                return new ResponseMessage(response.re_password[0], ResponseMessage.ERROR);
+                return MessageResponse.validationError(response.re_password[0]);
         }
 
-        return new ResponseMessage(ServiceUtil.ERROR_UNKNOWN, ResponseMessage.ERROR);
+        return MessageResponse.unknownError();
     }
 
     public static WWWForm createRegisterForm(string email, string password, string password2) {
