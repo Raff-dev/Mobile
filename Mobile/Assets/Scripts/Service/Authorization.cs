@@ -97,7 +97,6 @@ public static class Authorization {
     public static void logout() {
         PlayerPrefs.DeleteKey(ACCESS_KEY_NAME);
         PlayerPrefs.DeleteKey(REFRESH_KEY_NAME);
-        PlayerPrefs.DeleteKey(User.USER_ID_KEY_NAME);
     }
 
     public static void saveAuthorizationTokens(AuthResponse response) {
