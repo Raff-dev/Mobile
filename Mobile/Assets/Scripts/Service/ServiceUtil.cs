@@ -18,6 +18,7 @@ public static class ServiceUtil {
     public const string PROFILE_URL = BASE_URL + "Profiles/";
     public const string PROFILE_INFO_URL = PROFILE_URL + "info/";
     public const string STELLAR_POINTS_GAIN_URL = PROFILE_URL + "gain_stellar_points/";
+    public const string HIGH_SCORE_URL = PROFILE_URL + "high_score/";
 
     public const int STATUS_201_CREATED = 201;
     public const int STATUS_200_OK = 200;
