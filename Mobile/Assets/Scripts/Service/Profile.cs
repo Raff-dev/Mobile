@@ -29,6 +29,7 @@ public static class Profile {
     [Serializable]
     public class ProfileResponse {
         public int stellar_points;
+        public int high_score;
         public bool is_high_score;
         public int score;
 
