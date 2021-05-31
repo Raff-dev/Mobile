@@ -21,6 +21,10 @@ public class MessageResponse : Response {
         messageText.text = message;
     }
 
+    public static MessageResponse from(Response response) {
+        return (MessageResponse)response;
+    }
+
     public static MessageResponse loggedOutError() {
         return new MessageResponse(ERROR_LOGGED_OUT, ERROR);
     }
