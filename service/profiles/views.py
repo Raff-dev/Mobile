@@ -53,6 +53,29 @@ class ProfileViewSet(viewsets.GenericViewSet, mixins.DestroyModelMixin, mixins.R
         self.perform_update(serializer)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @action(methods=['POST'], detail=False)
+    def high_score(self, request, *args, **kwargs):
+        score = int(request.data['score'])
+        instance = self.get_object()
+
+        is_high_score = score > instance.high_score
+
+        if is_high_score:
+            data = {
+                'email': request.user.email,
+                'high_score': score
+            }
+            serializer = self.get_serializer(instance, data=data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+
+        result = {
+            'score': score,
+            'is_high_score': is_high_score
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
+
 
 def verify(request, *args, **kwargs):
     url = settings.DOMAIN + '/auth/users/activation/'
