@@ -22,6 +22,15 @@ public class PlayerController : MonoBehaviour {
 
     public float lookRateSpeed = 90f;
 
+    public float minRadius = 74f;
+    public float maxRadius = 125f;
+
+    public float X;
+    public float Z;
+    public float Y;
+
+    public float NewSpeed;
+
     private void Awake() {
         loadPlayerSkin();
     }
@@ -34,26 +43,9 @@ public class PlayerController : MonoBehaviour {
         GameObject model = Resources.Load($"{PATH_SKINS}/{skinName}", typeof(GameObject)) as GameObject;
         Instantiate(model, transform.position, Quaternion.identity, transform);
     }
-    public float minRadius = 74f;
-    public float maxRadius = 125f;
-
-
-    public float X;
-    public float Z;
-    public float Y;
-
-
-    public float NewSpeed;
-
-    void Start()
-    {
-        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationZ;
-    }
 
     void Update()
     {
-
-
         strafeSpeed = Mathf.Lerp(strafeSpeed, Input.GetAxis("Horizontal") * strafeSpeedMagnifier, strafeAcceleration * Time.deltaTime);
         hoverSpeed = Mathf.Lerp(hoverSpeed, Input.GetAxis("Vertical") * hoverSpeedMagnifier, hoverAcceleration * Time.deltaTime);
 
