@@ -1,3 +1,5 @@
+from typing import List
+from profiles.models import Profile, Skin, SkinOwnership
 import requests
 
 from django.conf import settings
@@ -10,7 +12,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.decorators import action
 
 from .permissions import IsOwnerOrReadOnly
-from .serializers import ProfileSerializer
+from .serializers import ProfileSerializer, SkinSerializer
 
 
 class ProfileViewSet(viewsets.GenericViewSet, mixins.DestroyModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin):
@@ -31,8 +33,8 @@ class ProfileViewSet(viewsets.GenericViewSet, mixins.DestroyModelMixin, mixins.R
 
     @action(methods=['GET'], detail=False)
     def info(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
+        profile = self.get_object()
+        serializer = self.get_serializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['POST'], detail=False)
@@ -42,13 +44,13 @@ class ProfileViewSet(viewsets.GenericViewSet, mixins.DestroyModelMixin, mixins.R
         if stellar_points < 0:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        instance = self.get_object()
+        profile = self.get_object()
         data = {
             'email': request.user.email,
-            'stellar_points': instance.stellar_points + stellar_points
+            'stellar_points': profile.stellar_points + stellar_points
         }
 
-        serializer = self.get_serializer(instance, data=data)
+        serializer = self.get_serializer(profile, data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -56,16 +58,16 @@ class ProfileViewSet(viewsets.GenericViewSet, mixins.DestroyModelMixin, mixins.R
     @action(methods=['POST'], detail=False)
     def high_score(self, request, *args, **kwargs):
         score = int(request.data['score'])
-        instance = self.get_object()
+        profile = self.get_object()
 
-        is_high_score = score > instance.high_score
+        is_high_score = score > profile.high_score
 
         if is_high_score:
             data = {
                 'email': request.user.email,
                 'high_score': score
             }
-            serializer = self.get_serializer(instance, data=data)
+            serializer = self.get_serializer(profile, data=data)
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
 
@@ -76,11 +78,33 @@ class ProfileViewSet(viewsets.GenericViewSet, mixins.DestroyModelMixin, mixins.R
 
         return Response(result, status=status.HTTP_200_OK)
 
+    @action(methods=['POST'], detail=False)
+    def unlock_skin(self, request, *args, **kwargs):
+        name: str = request.data['name']
+
+        skins: List[Skin] = Skin.objects.all()
+        skin: Skin = get_object_or_404(skins, name=name)
+        profile: Profile = self.get_object()
+
+        if profile.skins.filter(skin=skin).exists() or profile.stellar_points < skin.price:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        profile.stellar_points -= skin.price
+        SkinOwnership.objects.create(profile=profile, skin=skin)
+        profile.save()
+        result = {'stellar_points': profile.stellar_points}
+        return Response(result, status=status.HTTP_201_CREATED)
+
+
+class SkinViewSet(viewsets.ModelViewSet):
+    queryset = Skin.objects.all()
+    serializer_class = SkinSerializer
+
 
 def verify(request, *args, **kwargs):
     url = settings.DOMAIN + '/auth/users/activation/'
     response = requests.post(url, kwargs)
-    message = 'dafuq'
+    message = ''
     print(response.status_code)
     if response.status_code == status.HTTP_204_NO_CONTENT:
         message = 'Your account has been activated succesfully!'
