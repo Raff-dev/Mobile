@@ -69,6 +69,7 @@ class Profile(AbstractBaseUser, PermissionsMixin):
 class Skin(models.Model):
     name = models.CharField(max_length=50, unique=True)
     default = models.BooleanField(default=False)
+    price = models.IntegerField(default=100)
 
     def __str__(self) -> str:
         return f'{self.name}'

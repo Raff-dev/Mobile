@@ -18,6 +18,11 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         exclude = ['password']
 
+class SkinSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Skin
+        fields = '__all__'
 
 class RegisterSerializer(serializers.ModelSerializer):
 
