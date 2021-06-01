@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public static class Authorization {
-    public const string REFRESH_KEY_NAME = "refresh";
-    public const string ACCESS_KEY_NAME = "access";
+    public const string PREFERENCE_REFRESH_TOKEN = "refresh";
+    public const string PREFERENCE_ACCESS_TOKEN = "access";
 
     public const string AUTHORIZATION_HEADER_NAME = "Authorization";
     public const string AUTHORIZATION_HEADER_VALUE_PREFIX = "JWT ";
@@ -26,12 +26,12 @@ public static class Authorization {
     }
 
     public static void setAuthorizationHeader(UnityWebRequest request) {
-        string accessKey = AUTHORIZATION_HEADER_VALUE_PREFIX + PlayerPrefs.GetString(ACCESS_KEY_NAME);
+        string accessKey = AUTHORIZATION_HEADER_VALUE_PREFIX + PlayerPrefs.GetString(PREFERENCE_ACCESS_TOKEN);
         request.SetRequestHeader(AUTHORIZATION_HEADER_NAME, accessKey);
     }
 
     public static bool wasLoggedIn() {
-        return PlayerPrefs.HasKey(REFRESH_KEY_NAME) && PlayerPrefs.HasKey(ACCESS_KEY_NAME);
+        return PlayerPrefs.HasKey(PREFERENCE_REFRESH_TOKEN) && PlayerPrefs.HasKey(PREFERENCE_ACCESS_TOKEN);
     }
 
     public static IEnumerator verify(System.Action<MessageResponse> handleResponse) {
@@ -39,7 +39,7 @@ public static class Authorization {
             handleResponse(MessageResponse.loggedOutError());
         }
 
-        string accessToken = PlayerPrefs.GetString(ACCESS_KEY_NAME);
+        string accessToken = PlayerPrefs.GetString(PREFERENCE_ACCESS_TOKEN);
         WWWForm form = new WWWForm();
         form.AddField(ServiceUtil.TOKEN_FIELD_NAME, accessToken);
 
@@ -95,13 +95,14 @@ public static class Authorization {
     }
 
     public static void logout() {
-        PlayerPrefs.DeleteKey(ACCESS_KEY_NAME);
-        PlayerPrefs.DeleteKey(REFRESH_KEY_NAME);
+        PlayerPrefs.DeleteKey(PREFERENCE_ACCESS_TOKEN);
+        PlayerPrefs.DeleteKey(PREFERENCE_REFRESH_TOKEN);
+        PlayerPrefs.DeleteKey(PlayerController.PREFERENCE_SKIN);
     }
 
     public static void saveAuthorizationTokens(AuthResponse response) {
-        PlayerPrefs.SetString(ACCESS_KEY_NAME, response.access);
-        PlayerPrefs.SetString(REFRESH_KEY_NAME, response.refresh);
+        PlayerPrefs.SetString(PREFERENCE_ACCESS_TOKEN, response.access);
+        PlayerPrefs.SetString(PREFERENCE_REFRESH_TOKEN, response.refresh);
     }
 
     [Serializable]
