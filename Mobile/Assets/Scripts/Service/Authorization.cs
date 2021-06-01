@@ -69,7 +69,10 @@ public static class Authorization {
             AuthResponse response = JsonUtility.FromJson<AuthResponse>(request.downloadHandler.text);
             return MessageResponse.unauthorizedError(response.detail);
 
-        } else if (!wasLoggedIn())
+        } else if (request.responseCode == ServiceUtil.STATUS_404_NOT_FOUND)
+            return MessageResponse.notFoundError();
+
+        else if (!wasLoggedIn())
             return MessageResponse.loggedOutError();
 
         return MessageResponse.unknownError();

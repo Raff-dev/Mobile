@@ -5,6 +5,7 @@ public class MessageResponse : Response {
     public const string ERROR_CONNECTION = "Something went wrong, check your connection and try later";
     public const string ERROR_UNKNOWN = "Unknown error has occured";
     public const string ERROR_BAD_REQUEST = "Bad request";
+    public const string ERROR_NOT_FOUND = "Not Found";
 
     public Color ERROR_COLOR = UnityEngine.Color.red;
     public Color MESSAGE_COLOR = UnityEngine.Color.blue;
@@ -46,6 +47,10 @@ public class MessageResponse : Response {
 
     public static MessageResponse badRequestError() {
         return new MessageResponse(ERROR_BAD_REQUEST, ERROR);
+    }
+
+    public static MessageResponse notFoundError() {
+        return new MessageResponse(ERROR_NOT_FOUND, ERROR);
     }
 
     public static MessageResponse unknownError() {
