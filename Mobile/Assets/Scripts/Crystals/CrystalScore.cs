@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CrystalScore : MonoBehaviour
 {
-    public int scoreValue = 50;
+    public int scoreValue = 10;
 
     private void OnTriggerEnter(Collider other)
     {

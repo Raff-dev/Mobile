@@ -22,11 +22,21 @@ public class PlayerController : MonoBehaviour {
 
     public float lookRateSpeed = 90f;
 
+    public float minRadius = 74f;
+    public float maxRadius = 125f;
+
+    public float X;
+    public float Z;
+    public float Y;
+
+    public float NewSpeed;
+
     private void Awake() {
         loadPlayerSkin();
     }
 
-    private void loadPlayerSkin() {
+    private void loadPlayerSkin()
+    {
         string skinName = PlayerPrefs.HasKey(PREFERENCE_SKIN)
             ? PlayerPrefs.GetString(PREFERENCE_SKIN)
             : DEFAULT_SKIN;
@@ -34,17 +44,32 @@ public class PlayerController : MonoBehaviour {
         Instantiate(model, transform.position, Quaternion.identity, transform);
     }
 
-    void Update() {
+    void Update()
+    {
         strafeSpeed = Mathf.Lerp(strafeSpeed, Input.GetAxis("Horizontal") * strafeSpeedMagnifier, strafeAcceleration * Time.deltaTime);
         hoverSpeed = Mathf.Lerp(hoverSpeed, Input.GetAxis("Vertical") * hoverSpeedMagnifier, hoverAcceleration * Time.deltaTime);
 
-        transform.Rotate(
-            hoverSpeed * lookRateSpeed * Time.deltaTime,
-            strafeSpeed * lookRateSpeed * Time.deltaTime,
-            0.0f,
-            Space.Self
-        );
+        X = transform.position.x;
+        Z = transform.position.z;
+        Y = transform.position.y;
 
+        if (X*X + Z*Z > maxRadius*maxRadius)
+        {
+            strafeSpeed = 1.0f;
+
+        } else if(X*X + Z*Z < minRadius*minRadius)
+        {
+            strafeSpeed = -1.0f;
+        }
+ 
+
+        transform.Rotate(
+           0.0f,
+           strafeSpeed * lookRateSpeed * Time.deltaTime,
+           0.0f,
+           Space.Self
+       );
         transform.position += transform.forward * forwardSpeed * Time.deltaTime;
+
     }
 }
