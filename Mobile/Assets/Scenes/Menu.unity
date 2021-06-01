@@ -1380,7 +1380,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 215.17822}
+  m_AnchoredPosition: {x: 0, y: 184.50665}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &340494977
@@ -1843,8 +1843,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2938,7 +2938,7 @@ GameObject:
   - component: {fileID: 799771342}
   - component: {fileID: 799771341}
   m_Layer: 5
-  m_Name: SelectButton
+  m_Name: UnlockButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3003,14 +3003,14 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 799771342}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1132251343}
         m_TargetAssemblyTypeName: CustomizationManager, Assembly-CSharp
-        m_MethodName: select
+        m_MethodName: unlock
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4321,12 +4321,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35446eec6cd30af4e904ad92829a95c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SKIN_THUMBNAIL_WIDTH: 0
-  SKIN_THUMBNAIL_HEIGHT: 0
   stellarPointsText: {fileID: 2090860541}
   contentContainer: {fileID: 340494975}
   buttonPrefab: {fileID: 7992023375418698264, guid: 7cd487c60b3225f48842b684beb04de8,
     type: 3}
+  unlockButton: {fileID: 799771341}
   skins:
   - {fileID: 1820494407919854, guid: 0478b1e28fd9831458b0f051b9d2ad8b, type: 3}
   - {fileID: 1565955372155944, guid: 9049f178339a1ec49b8d10542e9d6787, type: 3}
@@ -4950,7 +4949,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: SELECT
+  m_text: Unlock
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

@@ -32,9 +32,15 @@ public static class Profile {
         public int high_score;
         public bool is_high_score;
         public int score;
+        public List<Skin> skins;
 
         public string toString() {
             return $"Stellar Points: {stellar_points} High Score: {is_high_score} Score: {score}";
+        }
+
+        [Serializable]
+        public class Skin {
+            public string name;
         }
     }
 }
