@@ -1,9 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
-{
+public class PlayerController : MonoBehaviour {
+    public const string DEFAULT_SKIN = "StarSparrow1";
+    public const string PREFERENCE_SKIN = "skin";
+    public const string PATH_SKINS = "skins";
+
     public float forwardSpeedMagnifier = 5f;
     public float strafeSpeedMagnifier = 3f;
     public float hoverSpeedMagnifier = 2f;
@@ -18,13 +22,19 @@ public class PlayerController : MonoBehaviour
 
     public float lookRateSpeed = 90f;
 
-    void Start()
-    {
-        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationZ;
+    private void Awake() {
+        loadPlayerSkin();
     }
 
-    void Update()
-    {
+    private void loadPlayerSkin() {
+        string skinName = PlayerPrefs.HasKey(PREFERENCE_SKIN)
+            ? PlayerPrefs.GetString(PREFERENCE_SKIN)
+            : DEFAULT_SKIN;
+        GameObject model = Resources.Load($"{PATH_SKINS}/{skinName}", typeof(GameObject)) as GameObject;
+        Instantiate(model, transform.position, Quaternion.identity, transform);
+    }
+
+    void Update() {
         strafeSpeed = Mathf.Lerp(strafeSpeed, Input.GetAxis("Horizontal") * strafeSpeedMagnifier, strafeAcceleration * Time.deltaTime);
         hoverSpeed = Mathf.Lerp(hoverSpeed, Input.GetAxis("Vertical") * hoverSpeedMagnifier, hoverAcceleration * Time.deltaTime);
 
