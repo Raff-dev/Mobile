@@ -26,12 +26,14 @@ public class PlayerController : MonoBehaviour {
         loadPlayerSkin();
     }
 
-    private void loadPlayerSkin() {
+    private void loadPlayerSkin()
+    {
         string skinName = PlayerPrefs.HasKey(PREFERENCE_SKIN)
             ? PlayerPrefs.GetString(PREFERENCE_SKIN)
             : DEFAULT_SKIN;
         GameObject model = Resources.Load($"{PATH_SKINS}/{skinName}", typeof(GameObject)) as GameObject;
         Instantiate(model, transform.position, Quaternion.identity, transform);
+    }
     public float minRadius = 74f;
     public float maxRadius = 125f;
 

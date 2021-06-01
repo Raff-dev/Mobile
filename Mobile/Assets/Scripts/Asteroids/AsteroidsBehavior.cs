@@ -2,17 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Asteroids_behavior : MonoBehaviour
+public class AsteroidsBehavior : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public float speed = 200.0f;
+
     void Start()
     {
-        
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationZ;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        transform.Rotate(new Vector3(0, speed * Time.deltaTime, 0));
     }
 }
