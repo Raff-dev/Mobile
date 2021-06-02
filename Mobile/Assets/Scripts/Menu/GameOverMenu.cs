@@ -43,7 +43,6 @@ public class GameOverMenu : MenuPanel {
                 Debug.Log(MessageResponse.from(response).message);
             } else {
                 Profile.ProfileResponse data = DataResponse<Profile.ProfileResponse>.from(response).data;
-                Debug.Log(data.toString());
 
                 if (data.is_high_score) {
                     highScoreText.gameObject.SetActive(true);
