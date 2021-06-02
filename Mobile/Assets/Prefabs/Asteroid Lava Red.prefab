@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 65566858718617196}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -40,7 +40,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1014899055782066}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 2, y: 5, z: 2}
@@ -59,7 +59,7 @@ GameObject:
   - component: {fileID: 1999514486317253821}
   m_Layer: 0
   m_Name: Asteroid Lava Red
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -142,4 +142,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc3a732a995bdd54894eb12c3f2a8177, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 200
+  rotationSpeed: 200
