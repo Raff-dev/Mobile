@@ -8,13 +8,14 @@ public class PlayerController : MonoBehaviour {
     public const string PREFERENCE_SKIN = "skin";
     public const string PATH_SKINS = "skins";
 
+    [SerializeField] private GameOverMenu gameOverMenu;
+
     public float forwardSpeedMagnifier = 5f;
     public float strafeSpeedMagnifier = 3f;
     public float hoverSpeedMagnifier = 2f;
 
     public float forwardAcceleration = 2.5f;
     public float strafeAcceleration = 5f;
-    public float hoverAcceleration = 2f;
 
     public float forwardSpeed = 20f;
     public float strafeSpeed;
@@ -25,18 +26,11 @@ public class PlayerController : MonoBehaviour {
     public float minRadius = 74f;
     public float maxRadius = 125f;
 
-    public float X;
-    public float Z;
-    public float Y;
-
-    public float NewSpeed;
-
     private void Awake() {
         loadPlayerSkin();
     }
 
-    private void loadPlayerSkin()
-    {
+    private void loadPlayerSkin() {
         string skinName = PlayerPrefs.HasKey(PREFERENCE_SKIN)
             ? PlayerPrefs.GetString(PREFERENCE_SKIN)
             : DEFAULT_SKIN;
@@ -44,32 +38,25 @@ public class PlayerController : MonoBehaviour {
         Instantiate(model, transform.position, Quaternion.identity, transform);
     }
 
-    void Update()
-    {
+    void Update() {
         strafeSpeed = Mathf.Lerp(strafeSpeed, Input.GetAxis("Horizontal") * strafeSpeedMagnifier, strafeAcceleration * Time.deltaTime);
-        hoverSpeed = Mathf.Lerp(hoverSpeed, Input.GetAxis("Vertical") * hoverSpeedMagnifier, hoverAcceleration * Time.deltaTime);
 
-        X = transform.position.x;
-        Z = transform.position.z;
-        Y = transform.position.y;
+        float rSquared = (float)(Math.Pow(transform.position.x, 2) + Math.Pow(transform.position.z, 2));
 
-        if (X*X + Z*Z > maxRadius*maxRadius)
-        {
+        if (rSquared > maxRadius * maxRadius) {
             strafeSpeed = 1.0f;
-
-        } else if(X*X + Z*Z < minRadius*minRadius)
-        {
+        } else if (rSquared < minRadius * minRadius) {
             strafeSpeed = -1.0f;
         }
- 
 
-        transform.Rotate(
-           0.0f,
-           strafeSpeed * lookRateSpeed * Time.deltaTime,
-           0.0f,
-           Space.Self
-       );
+        transform.Rotate(0.0f, strafeSpeed * lookRateSpeed * Time.deltaTime, 0.0f, Space.Self);
         transform.position += transform.forward * forwardSpeed * Time.deltaTime;
+    }
 
+    private void OnTriggerEnter(Collider other) {
+        if (other.gameObject.CompareTag(Tag.Obstacle.ToString())) {
+            Destroy(gameObject);
+            gameOverMenu.gameObject.SetActive(true);
+        }
     }
 }
