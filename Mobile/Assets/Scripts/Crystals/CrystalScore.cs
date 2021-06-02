@@ -2,21 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CrystalScore : MonoBehaviour
-{
+public class CrystalScore : MonoBehaviour {
     public int scoreValue = 10;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == Tags.TAG_PLAYER)
-        {
+    private void OnTriggerEnter(Collider other) {
+        if (other.tag == Tag.Player.ToString()) {
             other.GetComponent<ScoreCounter>().score += this.scoreValue;
-            onCollection();
+            Destroy(gameObject);
         }
-    }
-
-    protected virtual void onCollection()
-    {
-        Destroy(gameObject);
     }
 }
