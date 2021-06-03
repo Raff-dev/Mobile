@@ -10,21 +10,27 @@ public class PlayerController : MonoBehaviour {
 
     [SerializeField] private GameOverMenu gameOverMenu;
 
-    public float forwardSpeedMagnifier = 5f;
-    public float strafeSpeedMagnifier = 3f;
-    public float hoverSpeedMagnifier = 2f;
+    [SerializeField] private float strafeSpeedMagnifier = 3f;
+    [SerializeField] private float rollSpeedMagnifier = 3f;
 
-    public float forwardAcceleration = 2.5f;
-    public float strafeAcceleration = 5f;
+    [SerializeField] private float strafeAcceleration = 5f;
+    [SerializeField] private float rollAcceleration = 5f;
 
-    public float forwardSpeed = 20f;
-    public float strafeSpeed;
-    public float hoverSpeed;
+    [SerializeField] private float forwardSpeed = 20f;
+    [SerializeField] private float lookRateSpeed = 90f;
 
-    public float lookRateSpeed = 90f;
+    [SerializeField] private float minRadius = 80f;
+    [SerializeField] private float maxRadius = 120f;
 
-    public float minRadius = 74f;
-    public float maxRadius = 125f;
+    [SerializeField] private float maxRollDegree = 35f;
+    [SerializeField] private float rollBackSpeed = 30f;
+
+    private float rollSpeed;
+    private float strafeSpeed;
+    private float horizontal = 0f;
+
+
+    private GameObject playerModel;
 
     private void Awake() {
         loadPlayerSkin();
@@ -35,11 +41,12 @@ public class PlayerController : MonoBehaviour {
             ? PlayerPrefs.GetString(PREFERENCE_SKIN)
             : DEFAULT_SKIN;
         GameObject model = Resources.Load($"{PATH_SKINS}/{skinName}", typeof(GameObject)) as GameObject;
-        Instantiate(model, transform.position, Quaternion.identity, transform);
+        playerModel = Instantiate(model, transform.position, Quaternion.identity, transform);
     }
 
     void Update() {
-        strafeSpeed = Mathf.Lerp(strafeSpeed, Input.GetAxis("Horizontal") * strafeSpeedMagnifier, strafeAcceleration * Time.deltaTime);
+        horizontal = Input.GetAxis("Horizontal");
+        strafeSpeed = Mathf.Lerp(strafeSpeed, horizontal * strafeSpeedMagnifier, strafeAcceleration * Time.deltaTime);
 
         float rSquared = (float)(Math.Pow(transform.position.x, 2) + Math.Pow(transform.position.z, 2));
 
@@ -49,7 +56,23 @@ public class PlayerController : MonoBehaviour {
             strafeSpeed = -1.0f;
         }
 
+        if (playerModel) {
+            float modelRotation = playerModel.transform.rotation.eulerAngles.z;
+            if (modelRotation > 180) modelRotation -= 360;
+
+            if (horizontal != 0 && Math.Abs(modelRotation) < maxRollDegree) {
+                rollSpeed = Mathf.Lerp(rollSpeed, horizontal * rollSpeedMagnifier, rollAcceleration * Time.deltaTime);
+                playerModel.transform.Rotate(0f, 0f, -rollSpeed * Time.deltaTime, Space.Self);
+
+            } else if (Math.Abs(modelRotation) > 1f) {
+                int direction = -(int)(Math.Abs(modelRotation) / modelRotation);
+                rollBackSpeed = Mathf.Lerp(rollBackSpeed, rollSpeedMagnifier, rollAcceleration * Time.deltaTime);
+                playerModel.transform.Rotate(0f, 0f, direction * rollBackSpeed * Time.deltaTime, Space.Self);
+            }
+        }
+
         transform.Rotate(0.0f, strafeSpeed * lookRateSpeed * Time.deltaTime, 0.0f, Space.Self);
+        transform.position += transform.right * strafeSpeed * Time.deltaTime;
         transform.position += transform.forward * forwardSpeed * Time.deltaTime;
     }
 
