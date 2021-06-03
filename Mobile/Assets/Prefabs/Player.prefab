@@ -47,18 +47,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86c976c1e0afbaf40af7a339e4d2d600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forwardSpeedMagnifier: 1
+  gameOverMenu: {fileID: 0}
   strafeSpeedMagnifier: 3
-  hoverSpeedMagnifier: 2
-  forwardAcceleration: 2.5
+  rollSpeedMagnifier: 100
   strafeAcceleration: 100
-  hoverAcceleration: 2
+  rollAcceleration: 50
   forwardSpeed: 20
-  strafeSpeed: 0
-  hoverSpeed: 0
   lookRateSpeed: 90
-  X: 0
-  Z: 0
+  minRadius: 74
+  maxRadius: 125
 --- !u!54 &6639385499263296260
 Rigidbody:
   m_ObjectHideFlags: 0
