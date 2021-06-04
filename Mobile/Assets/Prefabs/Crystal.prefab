@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 1044879436462031296}
   - component: {fileID: 1044879436462031297}
   - component: {fileID: 1044879436462031298}
-  - component: {fileID: 1044879436462031299}
   - component: {fileID: -390069349178058126}
   m_Layer: 0
   m_Name: Crystal
@@ -98,26 +97,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.05
   m_Center: {x: -0.005, y: 0.02, z: 0}
---- !u!114 &1044879436462031299
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1044879436462031308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20e0165a912c0b74284c3de3023e2249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  instancesPerSection: 0
-  sections: 1
-  heightOffset: 0
-  center: {fileID: 0}
-  parent: {fileID: 0}
-  target: {fileID: 0}
-  radiuses:
-  - 100
 --- !u!114 &-390069349178058126
 MonoBehaviour:
   m_ObjectHideFlags: 0
