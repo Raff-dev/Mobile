@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float strafeAcceleration = 5f;
     [SerializeField] private float rollAcceleration = 5f;
 
-    [SerializeField] private float forwardSpeed = 20f;
+    [SerializeField] public float forwardSpeed = 20f;
     [SerializeField] private float lookRateSpeed = 90f;
 
     [SerializeField] private float minRadius = 80f;
