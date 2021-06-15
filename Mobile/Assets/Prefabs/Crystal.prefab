@@ -110,3 +110,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreValue: 10
+  highScoreText: {fileID: 8451806201123129780, guid: 3dab86c7775589f41a73ed97feb44ca4,
+    type: 3}

@@ -5,9 +5,11 @@ using UnityEngine;
 public class ScoreCounter : MonoBehaviour
 {
     public int score = 0;
+    [SerializeField] private TMPro.TMP_Text highScoreText;
 
-    private void OnGUI()
+    public void addScore(int value)
     {
-        GUI.Label(new Rect(10, 10, 100, 20), "Score : " + this.score);
+        score += value;
+        highScoreText.text = $"Score: " + score;
     }
 }
