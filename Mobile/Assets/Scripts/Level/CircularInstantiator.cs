@@ -38,6 +38,7 @@ public class CircularInstantiator : MonoBehaviour {
     }
 
     private void Update() {
+        if(!player) return;
         playerAngleDegrees = getAngleDegrees(player.transform.position, center.position);
 
         if (playerDistance > 180) {
