@@ -1,9 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour
+{
     public const string DEFAULT_SKIN = "StarSparrow1";
     public const string PREFERENCE_SKIN = "skin";
     public const string PATH_SKINS = "skins";
@@ -32,11 +31,13 @@ public class PlayerController : MonoBehaviour {
 
     private GameObject playerModel;
 
-    private void Awake() {
+    private void Awake()
+    {
         loadPlayerSkin();
     }
 
-    private void loadPlayerSkin() {
+    private void loadPlayerSkin()
+    {
         string skinName = PlayerPrefs.HasKey(PREFERENCE_SKIN)
             ? PlayerPrefs.GetString(PREFERENCE_SKIN)
             : DEFAULT_SKIN;
@@ -44,27 +45,38 @@ public class PlayerController : MonoBehaviour {
         playerModel = Instantiate(model, transform.position, Quaternion.identity, transform);
     }
 
-    void Update() {
+    void Update()
+    {
+        Debug.Log("Acceleration: " + Input.acceleration);
+
         horizontal = Input.GetAxis("Horizontal");
+        horizontal = Input.acceleration.x;
         strafeSpeed = Mathf.Lerp(strafeSpeed, horizontal * strafeSpeedMagnifier, strafeAcceleration * Time.deltaTime);
 
         float rSquared = (float)(Math.Pow(transform.position.x, 2) + Math.Pow(transform.position.z, 2));
 
-        if (rSquared > maxRadius * maxRadius) {
+        if (rSquared > maxRadius * maxRadius)
+        {
             strafeSpeed = 1.0f;
-        } else if (rSquared < minRadius * minRadius) {
+        }
+        else if (rSquared < minRadius * minRadius)
+        {
             strafeSpeed = -1.0f;
         }
 
-        if (playerModel) {
+        if (playerModel)
+        {
             float modelRotation = playerModel.transform.rotation.eulerAngles.z;
             if (modelRotation > 180) modelRotation -= 360;
 
-            if (horizontal != 0 && Math.Abs(modelRotation) < maxRollDegree) {
+            if (horizontal != 0 && Math.Abs(modelRotation) < maxRollDegree)
+            {
                 rollSpeed = Mathf.Lerp(rollSpeed, horizontal * rollSpeedMagnifier, rollAcceleration * Time.deltaTime);
                 playerModel.transform.Rotate(0f, 0f, -rollSpeed * Time.deltaTime, Space.Self);
 
-            } else if (Math.Abs(modelRotation) > 1f) {
+            }
+            else if (Math.Abs(modelRotation) > 1f)
+            {
                 int direction = -(int)(Math.Abs(modelRotation) / modelRotation);
                 rollBackSpeed = Mathf.Lerp(rollBackSpeed, rollSpeedMagnifier, rollAcceleration * Time.deltaTime);
                 playerModel.transform.Rotate(0f, 0f, direction * rollBackSpeed * Time.deltaTime, Space.Self);
@@ -76,8 +88,10 @@ public class PlayerController : MonoBehaviour {
         transform.position += transform.forward * forwardSpeed * Time.deltaTime;
     }
 
-    private void OnTriggerEnter(Collider other) {
-        if (other.gameObject.CompareTag(Tag.Obstacle.ToString())) {
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag(Tag.Obstacle.ToString()))
+        {
             Destroy(gameObject);
             gameOverMenu.gameObject.SetActive(true);
         }
